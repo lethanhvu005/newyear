@@ -16,10 +16,7 @@
 
     *{ box-sizing: border-box; }
     html,body{ height:100%; margin:0; overflow:hidden; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial; }
-    body{
-      color: var(--text);
-      background:#05060f;
-    }
+    body{ color: var(--text); background:#05060f; }
 
     /* animated gradient background */
     .bg{
@@ -60,7 +57,6 @@
       animation: up 14s linear infinite;
       transform: translateZ(0);
     }
-    /* balloon / lantern-ish with SVG */
     .floater svg{ width:100%; height:100%; display:block; }
     @keyframes up{
       from{ transform: translate3d(0, 115vh, 0) rotate(0deg); }
@@ -74,7 +70,7 @@
       padding: 22px;
     }
     .card{
-      width: min(900px, 100%);
+      width: min(920px, 100%);
       background: linear-gradient(180deg, var(--glass), var(--glass2));
       border:1px solid var(--stroke);
       border-radius: 28px;
@@ -170,10 +166,318 @@
     .footer a{ color: rgba(255,255,255,.80); text-decoration:none; border-bottom:1px dashed rgba(255,255,255,.35); }
     .footer a:hover{ color: rgba(255,255,255,.95); }
 
-    /* mobile safe area */
-    @supports(padding:max(0px)){
-      .wrap{ padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); }
+    /* modal base */
+    .modal{ position:fixed; inset:0; display:none; z-index:60; }
+    .modal.show{ display:block; }
+    .backdrop{
+      position:absolute; inset:0;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(8px);
     }
+    .panel{
+      position:relative;
+      width: min(940px, calc(100% - 28px));
+      margin: 8vh auto 0;
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 24px;
+      box-shadow: 0 40px 120px rgba(0,0,0,.55);
+      overflow:hidden;
+    }
+    .panelHeader{
+      display:flex; justify-content:space-between; align-items:center;
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+    }
+    .panelHeader h2{ margin:0; font-size: 16px; color: rgba(255,255,255,.92); }
+    .closeBtn{
+      cursor:pointer;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.22);
+      color: rgba(255,255,255,.9);
+      border-radius: 999px;
+      padding: 8px 10px;
+      font-size: 12px;
+    }
+    .panelBody{ padding: 16px; display:grid; gap: 14px; }
+
+    /* Lucky envelope */
+    .luckyWrap{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 14px;
+      align-items: stretch;
+    }
+    @media (max-width: 820px){
+      .luckyWrap{ grid-template-columns: 1fr; }
+      .panel{ margin-top: 5vh; }
+    }
+
+    .cardMini{
+      background: rgba(0,0,0,.18);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 18px;
+      padding: 14px;
+    }
+    .miniTitle{ margin:0 0 8px; font-size: 14px; color: rgba(255,255,255,.9); }
+    .miniText{ margin:0; font-size: 13px; color: rgba(255,255,255,.72); line-height: 1.45; }
+
+    .envelopeStage{
+      position:relative;
+      height: 240px;
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(255,255,255,.14), rgba(255,255,255,0) 45%),
+        rgba(0,0,0,.16);
+      border: 1px solid rgba(255,255,255,.12);
+      overflow:hidden;
+      display:grid;
+      place-items:center;
+    }
+    .env{
+      width: 220px; height: 160px;
+      position:relative;
+      transform: translateZ(0);
+      filter: drop-shadow(0 18px 28px rgba(0,0,0,.35));
+    }
+    .env .body{
+      position:absolute; inset:0;
+      border-radius: 16px;
+      background: linear-gradient(180deg, rgba(255, 70, 90,.95), rgba(170, 0, 30,.95));
+      border: 1px solid rgba(255,255,255,.14);
+    }
+    .env .flap{
+      position:absolute; left:0; right:0; top:-1px; height: 90px;
+      background: linear-gradient(180deg, rgba(255, 140, 90,.95), rgba(255, 70, 90,.95));
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
+      border-top-left-radius: 16px;
+      border-top-right-radius: 16px;
+      transform-origin: 50% 0%;
+      transform: rotateX(0deg);
+    }
+    .env .seal{
+      position:absolute; left:50%; top:56%;
+      transform: translate(-50%,-50%);
+      width: 56px; height: 56px; border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.6), rgba(255,255,255,0) 45%), #f6d36e;
+      border: 1px solid rgba(255,255,255,.25);
+      display:grid; place-items:center;
+      color: rgba(0,0,0,.8);
+      font-weight: 900;
+      letter-spacing: .5px;
+    }
+    .env .paper{
+      position:absolute; left:10px; right:10px; bottom:10px; height: 120px;
+      background: rgba(255,255,255,.92);
+      border-radius: 12px;
+      transform: translateY(65px);
+      display:grid; place-items:center;
+      color: rgba(0,0,0,.85);
+      font-weight: 900;
+      font-size: 28px;
+      letter-spacing: .5px;
+      border: 1px solid rgba(0,0,0,.08);
+    }
+    .env.open .flap{ animation: flapOpen .55s ease forwards; }
+    .env.open .paper{ animation: paperUp .75s cubic-bezier(.2,.9,.2,1) forwards; }
+    @keyframes flapOpen{ to{ transform: rotateX(70deg); } }
+    @keyframes paperUp{
+      0%{ transform: translateY(65px); }
+      70%{ transform: translateY(-35px); }
+      100%{ transform: translateY(-28px); }
+    }
+    .resultLine{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .resultBadge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(0,0,0,.18);
+      border: 1px solid rgba(255,255,255,.12);
+      color: rgba(255,255,255,.9);
+      font-size: 13px;
+    }
+    .bigResult{
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: .2px;
+    }
+
+    /* Wheel */
+    .wheelStage{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      align-items: center;
+    }
+    @media (max-width: 820px){
+      .wheelStage{ grid-template-columns: 1fr; }
+    }
+
+    .wheelBox{
+      position:relative;
+      display:grid;
+      place-items:center;
+      background: rgba(0,0,0,.16);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 18px;
+      padding: 16px;
+      overflow:hidden;
+      min-height: 320px;
+    }
+    .wheel{
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.16);
+      box-shadow: 0 18px 50px rgba(0,0,0,.45);
+      position:relative;
+      transform: rotate(0deg);
+      transition: transform 3.6s cubic-bezier(.12,.88,.12,1);
+      will-change: transform;
+      background: conic-gradient(
+        rgba(82,230,255,.95) 0deg 72deg,      /* 100k */
+        rgba(255,96,214,.95) 72deg 144deg,    /* 50k */
+        rgba(255,211,110,.95) 144deg 216deg,  /* 20k */
+        rgba(255,140,90,.95) 216deg 288deg,   /* 10k */
+        rgba(180,255,140,.95) 288deg 360deg   /* 5k  */
+      );
+      overflow:hidden;
+    }
+    .wheel::after{
+      content:"";
+      position:absolute; inset:12px;
+      border-radius:50%;
+      background: rgba(0,0,0,.20);
+      border: 1px solid rgba(255,255,255,.14);
+      backdrop-filter: blur(6px);
+    }
+    .wheelCenter{
+      position:absolute;
+      inset: 0;
+      display:grid;
+      place-items:center;
+      pointer-events:none;
+    }
+    .wheelCenter .btnSpin{
+      pointer-events:auto;
+      border:none;
+      cursor:pointer;
+      width: 94px; height: 94px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.55), rgba(255,255,255,0) 48%), #f6d36e;
+      color: rgba(0,0,0,.86);
+      font-weight: 900;
+      font-size: 14px;
+      box-shadow: 0 18px 35px rgba(0,0,0,.35);
+      border: 1px solid rgba(255,255,255,.25);
+    }
+    .pointer{
+      position:absolute;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0; height: 0;
+      border-left: 12px solid transparent;
+      border-right: 12px solid transparent;
+      border-bottom: 18px solid rgba(255,255,255,.92);
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,.35));
+      z-index: 2;
+    }
+
+    .wheelLabels{
+      position:absolute; inset:0;
+      pointer-events:none;
+    }
+    .label{
+      position:absolute;
+      left: 50%; top: 50%;
+      transform-origin: 0 0;
+      font-size: 12px;
+      font-weight: 900;
+      color: rgba(0,0,0,.80);
+      text-shadow: 0 1px 0 rgba(255,255,255,.35);
+      white-space: nowrap;
+      user-select:none;
+    }
+
+    /* Music overlay */
+    .tapOverlay{
+      position:fixed; inset:0; display:none; place-items:center; z-index:70;
+      background: rgba(0,0,0,.55); backdrop-filter: blur(6px);
+    }
+    .tapOverlay button{
+      font: 700 16px system-ui;
+      padding: 14px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.10);
+      color: rgba(255,255,255,.95);
+      cursor: pointer;
+    }
+  
+    /* flying photos / stickers */
+    .photo-layer{ position:fixed; inset:0; pointer-events:none; z-index: 5; }
+    .flyer{
+      position:absolute;
+      width: 84px; height: 84px;
+      border-radius: 20px;
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.18);
+      backdrop-filter: blur(6px);
+      box-shadow: 0 18px 40px rgba(0,0,0,.35);
+      display:grid; place-items:center;
+      transform: translateZ(0);
+      animation: flyAcross linear forwards;
+      filter: saturate(1.05);
+    }
+    .flyer img{
+      width:100%; height:100%; object-fit:cover; display:block;
+    }
+    .flyer .emoji{
+      font-size: 34px;
+      filter: drop-shadow(0 10px 16px rgba(0,0,0,.35));
+    }
+    .bubble{
+      position:absolute;
+      left: 50%;
+      bottom: 90px;
+      transform: translateX(-50%);
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.40);
+      border: 1px solid rgba(255,255,255,.16);
+      color: rgba(255,255,255,.92);
+      font-size: 12px;
+      white-space: nowrap;
+      box-shadow: 0 18px 35px rgba(0,0,0,.35);
+      opacity: .98;
+    }
+    .bubble::after{
+      content:"";
+      position:absolute;
+      left:50%;
+      bottom:-8px;
+      transform: translateX(-50%);
+      width: 0; height: 0;
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-top: 10px solid rgba(0,0,0,.40);
+      filter: drop-shadow(0 8px 10px rgba(0,0,0,.22));
+    }
+    @keyframes flyAcross{
+      from{ transform: translate3d(-18vw, 0, 0) rotate(-8deg); }
+      to{ transform: translate3d(118vw, 0, 0) rotate(10deg); }
+    }
+
   </style>
 </head>
 
@@ -188,6 +492,14 @@
   <!-- floating lantern/balloons -->
   <div class="float-layer" id="floatLayer" aria-hidden="true"></div>
 
+  <!-- flying photos (upload your images as me1.png, me2.png, me3.png...) -->
+  <div class="photo-layer" id="photoLayer" aria-hidden="true"></div>
+
+  <!-- music permission overlay (shown if autoplay is blocked) -->
+  <div class="tapOverlay" id="tapOverlay">
+    <button type="button">🎵 Chạm để bật nhạc</button>
+  </div>
+
   <div class="wrap">
     <div class="card">
       <div class="inner">
@@ -200,6 +512,8 @@
         <div class="pillrow">
           <button class="pill" id="btnBurst" type="button">🎆 Bắn pháo hoa</button>
           <button class="pill" id="btnConfetti" type="button">🎉 Thêm confetti</button>
+          <button class="pill" id="btnLucky" type="button">🧧 Rút lì xì</button>
+          <button class="pill" id="btnWheel" type="button">🎡 Vòng quay</button>
           <button class="pill" id="btnMusic" type="button">🔊 Bật nhạc</button>
         </div>
 
@@ -213,9 +527,86 @@
     </div>
   </div>
 
+  <!-- LÌ XÌ MODAL -->
+  <div class="modal" id="luckyModal" aria-hidden="true">
+    <div class="backdrop" data-close="lucky"></div>
+    <div class="panel" role="dialog" aria-modal="true" aria-labelledby="luckyTitle">
+      <div class="panelHeader">
+        <h2 id="luckyTitle">🧧 Rút bao lì xì</h2>
+        <button class="closeBtn" type="button" data-close="lucky">Đóng ✕</button>
+      </div>
+      <div class="panelBody">
+        <div class="luckyWrap">
+          <div class="envelopeStage">
+            <div class="env" id="env">
+              <div class="body"></div>
+              <div class="flap"></div>
+              <div class="seal">LỘC</div>
+              <div class="paper" id="envPaper">—</div>
+            </div>
+          </div>
+
+          <div class="cardMini">
+            <p class="miniTitle">Thể lệ</p>
+            <p class="miniText">
+              Bấm <b>“Rút ngay”</b> để mở bao lì xì. Kết quả tuân theo đúng tỷ lệ:
+              <b>100k 15%</b>, <b>50k 30%</b>, <b>20k 40%</b>, <b>10k 10%</b>, <b>5k 5%</b>.
+            </p>
+            <div style="height:10px"></div>
+            <div class="resultLine">
+              <span class="resultBadge">Kết quả: <span class="bigResult" id="luckyResult">—</span></span>
+              <button class="pill" id="btnLuckyDraw" type="button">🧧 Rút ngay</button>
+            </div>
+            <div style="height:8px"></div>
+            <p class="miniText" id="luckyFun">😄 Tip: rút nhiều lần cho vui</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHEEL MODAL -->
+  <div class="modal" id="wheelModal" aria-hidden="true">
+    <div class="backdrop" data-close="wheel"></div>
+    <div class="panel" role="dialog" aria-modal="true" aria-labelledby="wheelTitle">
+      <div class="panelHeader">
+        <h2 id="wheelTitle">🎡 Vòng quay lì xì</h2>
+        <button class="closeBtn" type="button" data-close="wheel">Đóng ✕</button>
+      </div>
+
+      <div class="panelBody">
+        <div class="wheelStage">
+          <div class="wheelBox">
+            <div class="pointer" aria-hidden="true"></div>
+
+            <div style="position:relative">
+              <div class="wheel" id="wheel"></div>
+              <div class="wheelLabels" id="wheelLabels" aria-hidden="true"></div>
+              <div class="wheelCenter">
+                <button class="btnSpin" id="btnSpin" type="button">SPIN</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="cardMini">
+            <p class="miniTitle">Tỷ lệ trúng</p>
+            <p class="miniText" id="oddsText"></p>
+            <div style="height:10px"></div>
+            <div class="resultLine">
+              <span class="resultBadge">Kết quả: <span class="bigResult" id="wheelResult">—</span></span>
+              <button class="pill" id="btnSpinAlt" type="button">🎡 Quay</button>
+            </div>
+            <div style="height:10px"></div>
+            <p class="miniText" id="wheelFun">😄 Lưu ý: vòng quay chỉ là hiệu ứng; xác suất đúng theo bảng ở trên.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 <script>
 (() => {
-  // ===== basic helpers =====
+  // ===== helpers =====
   const DPR = Math.min(2, window.devicePixelRatio || 1);
   const rand = (a,b)=> a + Math.random()*(b-a);
 
@@ -236,7 +627,6 @@
           <stop offset="1" stop-color="rgba(255,255,255,0)"/>
         </radialGradient>
       </defs>
-      <!-- balloon/lantern body -->
       <path d="M50 8
                C 20 8, 12 36, 12 58
                C 12 92, 30 112, 50 112
@@ -249,9 +639,7 @@
                C 70 112, 88 92, 88 58
                C 88 36, 80 8, 50 8 Z"
             fill="url(#shine)" opacity=".55"/>
-      <!-- little knot -->
       <path d="M42 110 L58 110 L54 121 L46 121 Z" fill="rgba(255,255,255,.65)" opacity=".45"/>
-      <!-- string -->
       <path d="M50 121 C 44 126, 54 128, 48 132" stroke="rgba(255,255,255,.45)" stroke-width="2" fill="none"/>
     </svg>
   `;
@@ -275,27 +663,98 @@
     el.style.opacity = String(rand(0.55, 0.95));
 
     layer.appendChild(el);
-    // keep DOM light
     setTimeout(()=> el.remove(), (dur+2)*1000);
   }
-  // initial
   for(let i=0;i<10;i++) spawnFloater();
   setInterval(spawnFloater, 1400);
 
-  // ===== confetti =====
+  // ===== flying photos / stickers (upload your images) =====
+  const photoLayer = document.getElementById('photoLayer');
+  // Upload ảnh của bạn lên repo cùng thư mục với index.html, đặt tên:
+  // me1.png, me2.png, me3.png ... (có thể là .jpg)
+  const PHOTO_PATHS = ["me1.png","me2.png","me3.png","me4.png"];
+  const EMOJIS = ["😂","🧧","😎","🥳","🧋","✨","🐉","🪭"];
+  const BUBBLES = ["Lộc tới nè!", "Ai đẹp trai thế!", "Tết mà, quẩy lên!", "Xin vía 100k!", "Cười lên cho hên 😆", "Đừng quay gian nha 😜"];
+
+  function spawnPhotoFlyer(){
+    const el = document.createElement('div');
+    el.className = 'flyer';
+    const y = rand(12, 84); // vh
+    const size = rand(64, 104);
+    const dur = rand(6.5, 12.5);
+    el.style.top = y + 'vh';
+    el.style.width = size + 'px';
+    el.style.height = size + 'px';
+    el.style.animationDuration = dur + 's';
+
+    // speech bubble
+    const bub = document.createElement('div');
+    bub.className = 'bubble';
+    bub.textContent = BUBBLES[Math.floor(Math.random()*BUBBLES.length)];
+    el.appendChild(bub);
+
+    // image with graceful fallback
+    const img = document.createElement('img');
+    const pick = PHOTO_PATHS[Math.floor(Math.random()*PHOTO_PATHS.length)];
+    img.src = pick;
+    img.alt = "photo";
+    let usedFallback = false;
+
+    const emoji = document.createElement('div');
+    emoji.className = 'emoji';
+    emoji.textContent = EMOJIS[Math.floor(Math.random()*EMOJIS.length)];
+
+    img.onerror = () => {
+      if(usedFallback) return;
+      usedFallback = true;
+      img.remove();
+      el.appendChild(emoji);
+    };
+    img.onload = () => {
+      el.appendChild(img);
+    };
+
+    // if load takes too long, show emoji first
+    setTimeout(() => {
+      if(el.isConnected && !el.querySelector('img') && !usedFallback){
+        el.appendChild(emoji);
+      }
+    }, 350);
+
+    photoLayer.appendChild(el);
+    setTimeout(()=> el.remove(), (dur+1.2)*1000);
+  }
+
+  // spawn occasionally (fun but not too spammy)
+  for(let i=0;i<3;i++) setTimeout(spawnPhotoFlyer, i*900);
+  setInterval(() => {
+    // random chance to avoid too many
+    if(Math.random() < 0.72) spawnPhotoFlyer();
+  }, 1400);
+
+  // tap anywhere => spawn one instantly (fun!)
+  addEventListener('pointerdown', () => {
+    if(Math.random() < 0.55) spawnPhotoFlyer();
+  });
+
+  // ===== confetti + fireworks canvases =====
   const cConf = document.getElementById('confetti');
   const xConf = cConf.getContext('2d');
+  const cFire = document.getElementById('fireworks');
+  const xFire = cFire.getContext('2d');
 
   function resizeCanvas(c){
     c.width = Math.floor(innerWidth * DPR);
     c.height = Math.floor(innerHeight * DPR);
   }
-  addEventListener('resize', () => {
+  function resizeAll(){
     resizeCanvas(cConf);
     resizeCanvas(cFire);
-  });
-  resizeCanvas(cConf);
+  }
+  addEventListener('resize', resizeAll);
+  resizeAll();
 
+  // ===== confetti =====
   const confetti = [];
   function addConfetti(amount=180){
     for(let i=0;i<amount;i++){
@@ -322,8 +781,6 @@
       p.x += p.vx;
       p.y += p.vy;
       p.rot += p.vr;
-
-      // gentle wind
       p.vx += Math.sin((p.y / (140*DPR))) * 0.002 * DPR;
 
       const a = Math.max(0, Math.min(1, p.life/220));
@@ -337,19 +794,12 @@
 
       if(p.y > cConf.height + 40 || p.x < -60 || p.x > cConf.width + 60 || p.life <= 0) confetti.splice(i,1);
     }
-
-    // keep a baseline amount
     if(confetti.length < 140) addConfetti(30);
-
     requestAnimationFrame(confLoop);
   }
   confLoop();
 
   // ===== fireworks =====
-  const cFire = document.getElementById('fireworks');
-  const xFire = cFire.getContext('2d');
-  resizeCanvas(cFire);
-
   const sparks = [];
   function burst(px, py, power=1){
     const n = Math.floor(rand(50, 90) * power);
@@ -370,11 +820,9 @@
   let t = 0;
   function fireLoop(){
     t++;
-    // trail fade
     xFire.fillStyle = 'rgba(0,0,0,0.10)';
     xFire.fillRect(0,0,cFire.width,cFire.height);
 
-    // auto fireworks sometimes
     if(t % 34 === 0){
       burst(rand(cFire.width*0.15, cFire.width*0.85), rand(cFire.height*0.12, cFire.height*0.55), rand(0.8, 1.25));
     }
@@ -398,13 +846,11 @@
 
     requestAnimationFrame(fireLoop);
   }
-  // initial bursts
   for(let i=0;i<4;i++){
     burst(rand(cFire.width*0.2, cFire.width*0.8), rand(cFire.height*0.18, cFire.height*0.55), rand(0.9, 1.15));
   }
   fireLoop();
 
-  // click/tap fireworks
   function tap(ev){
     const rect = cFire.getBoundingClientRect();
     const cx = ('touches' in ev) ? ev.touches[0].clientX : ev.clientX;
@@ -414,51 +860,13 @@
   addEventListener('click', tap);
   addEventListener('touchstart', tap, {passive:true});
 
-  // buttons
+  // ===== buttons (main) =====
   document.getElementById('btnBurst').addEventListener('click', () => {
     burst(rand(cFire.width*0.2, cFire.width*0.8), rand(cFire.height*0.12, cFire.height*0.55), 1.35);
   });
   document.getElementById('btnConfetti').addEventListener('click', () => addConfetti(220));
 
-  // ===== optional music (user gesture) =====
-  let audio, playing = false;
-  const btnMusic = document.getElementById('btnMusic');
-
-  function setMusicLabel(){
-    btnMusic.textContent = playing ? '🔈 Tắt nhạc' : '🔊 Bật nhạc';
-  }
-  setMusicLabel();
-
-  btnMusic.addEventListener('click', async () => {
-    try{
-      if(!audio){
-      
-        audio = new Audio();
-        audio.src = "song.mp3"; // để trống mặc định (không nhạc)
-        audio.loop = true;
-        audio.volume = 0.35;
-      }
-
-      // Nếu chưa set src -> chỉ bật/tắt label, không lỗi
-      if(!audio.src || audio.src.endsWith(location.href)){
-        alert("Bạn chưa thêm nhạc 🎵\n\nNếu muốn có nhạc: upload file song.mp3 lên repo (cùng thư mục index.html), rồi trong code đổi audio.src = \"song.mp3\".");
-        return;
-      }
-
-      if(!playing){
-        await audio.play();
-        playing = true;
-      } else {
-        audio.pause();
-        playing = false;
-      }
-      setMusicLabel();
-    }catch(e){
-      alert("Trình duyệt chặn phát nhạc hoặc file nhạc không tải được.");
-    }
-  });
-
-  // copy link helper
+  // ===== copy link =====
   document.getElementById('copyLink').addEventListener('click', async (e) => {
     e.preventDefault();
     const url = location.href;
@@ -469,6 +877,200 @@
       prompt("Copy link này để tạo QR:", url);
     }
   });
+
+  // ===== prizes + weighted pick =====
+  const PRIZES = [
+    { label: "100k", weight: 15 },
+    { label: "50k",  weight: 30 },
+    { label: "20k",  weight: 40 },
+    { label: "10k",  weight: 10 },
+    { label: "5k",   weight: 5  },
+  ];
+
+  
+  // ===== funny lines (hài hước nhẹ) =====
+  const FUNNY = {
+    "100k": ["💸 Trúng 100k rồi! Tết này 'đỉnh nóc kịch trần' 😎", "🧧 100k! Lộc lá tới tấp luôn nha!", "🔥 100k! Ví bạn vừa được buff sức mạnh!"],
+    "50k":  ["✨ 50k! Vừa xinh vừa đủ ăn vặt 😋", "🪙 50k! Lộc vừa tới, đừng tiêu hết trong 5 phút nha 😆", "🎉 50k! Đúng kiểu 'vui là chính'!"],
+    "20k":  ["😄 20k! Đủ mua trà sữa… size nhỏ 😜", "🧋 20k! Lộc tới nhẹ nhàng, nhưng chắc chắn!", "🌟 20k! Tích tiểu thành đại!"],
+    "10k":  ["🤏 10k! Lộc mini nhưng tình cảm maxi!", "😂 10k! Coi như lấy hên nha!", "🍀 10k! Lộc 'nhẹ' nhưng may 'nặng'!"],
+    "5k":   ["🫶 5k! Không nhiều nhưng… có còn hơn không 😭", "🤣 5k! Lộc 'hạt tiêu' — cười cái cho sang!", "🐣 5k! Lộc mới nở, năm sau nở to!"]
+  };
+  const DEFAULT_FUNNY = ["🎊 Lộc tới rồi đó!", "😄 Vui là chính nha!", "🧧 Chúc bạn hên xui đúng ý!"];
+  function pickFunny(label){
+    const arr = FUNNY[label] || DEFAULT_FUNNY;
+    return arr[Math.floor(Math.random()*arr.length)];
+  }
+
+  function pickWeighted(items){
+    const total = items.reduce((s,x)=> s + x.weight, 0);
+    let r = Math.random() * total;
+    for(const it of items){
+      r -= it.weight;
+      if(r <= 0) return it;
+    }
+    return items[items.length-1];
+  }
+
+  // ===== modal helpers =====
+  const luckyModal = document.getElementById('luckyModal');
+  const wheelModal = document.getElementById('wheelModal');
+
+  function show(modal){ modal.classList.add('show'); modal.setAttribute('aria-hidden','false'); }
+  function hide(modal){ modal.classList.remove('show'); modal.setAttribute('aria-hidden','true'); }
+
+  document.querySelectorAll('[data-close="lucky"]').forEach(el => el.addEventListener('click', () => hide(luckyModal)));
+  document.querySelectorAll('[data-close="wheel"]').forEach(el => el.addEventListener('click', () => hide(wheelModal)));
+  addEventListener('keydown', (e) => {
+    if(e.key === 'Escape'){ hide(luckyModal); hide(wheelModal); }
+  });
+
+  // ===== Lucky envelope (draw) =====
+  const env = document.getElementById('env');
+  const envPaper = document.getElementById('envPaper');
+  const luckyResult = document.getElementById('luckyResult');
+  const luckyFun = document.getElementById('luckyFun');
+
+  function envelopeReset(){
+    env.classList.remove('open');
+    envPaper.textContent = "—";
+    luckyResult.textContent = "—";
+  }
+
+  document.getElementById('btnLucky').addEventListener('click', () => {
+    envelopeReset();
+    show(luckyModal);
+  });
+
+  document.getElementById('btnLuckyDraw').addEventListener('click', () => {
+    envelopeReset();
+    setTimeout(() => {
+      const prize = pickWeighted(PRIZES);
+      envPaper.textContent = prize.label;
+      luckyResult.textContent = prize.label;
+      luckyFun.textContent = pickFunny(prize.label);
+      env.classList.add('open');
+      addConfetti(120);
+      burst(rand(cFire.width*0.25, cFire.width*0.75), rand(cFire.height*0.15, cFire.height*0.45), 1.05);
+      if(navigator.vibrate) navigator.vibrate([20, 40, 20]);
+    }, 120);
+  });
+
+  // ===== Wheel =====
+  const wheel = document.getElementById('wheel');
+  const wheelLabels = document.getElementById('wheelLabels');
+  const wheelResult = document.getElementById('wheelResult');
+  const wheelFun = document.getElementById('wheelFun');
+  const oddsText = document.getElementById('oddsText');
+  oddsText.innerHTML = PRIZES.map(p => `<b>${p.label}</b>: ${p.weight}%`).join(" • ");
+
+  function buildWheelLabels(){
+    wheelLabels.innerHTML = "";
+    const span = 360 / PRIZES.length; // equal visual slices
+    for(let i=0;i<PRIZES.length;i++){
+      const mid = i*span + span/2;
+      const el = document.createElement('div');
+      el.className = 'label';
+      const angle = mid - 90; // move 0deg to top
+      const radius = 95;
+      el.style.transform = `rotate(${angle}deg) translate(${radius}px, -10px) rotate(${-angle}deg)`;
+      el.textContent = PRIZES[i].label;
+      wheelLabels.appendChild(el);
+    }
+  }
+  buildWheelLabels();
+
+  let spinning = false;
+  let currentRotation = 0;
+
+  function spinWheel(){
+    if(spinning) return;
+    spinning = true;
+
+    const prize = pickWeighted(PRIZES); // đúng tỷ lệ (không phụ thuộc độ rộng lát cắt)
+    wheelResult.textContent = "…";
+
+    const idx = PRIZES.findIndex(p => p === prize);
+    const span = 360 / PRIZES.length; // equal visual slices
+    const start = idx * span;
+
+    // random angle inside chosen slice (avoid edges)
+    const inside = start + rand(6, span - 6);
+
+    // rotate so "inside" lands under top pointer (270deg)
+    const target = 270 - inside;
+    const extra = 360 * rand(3, 5);
+    currentRotation = currentRotation + extra + target;
+    wheel.style.transform = `rotate(${currentRotation}deg)`;
+
+    setTimeout(() => {
+      wheelResult.textContent = prize.label;
+      const fun = pickFunny(prize.label);
+      wheelFun.textContent = fun;
+      addConfetti(140);
+      burst(rand(cFire.width*0.2, cFire.width*0.8), rand(cFire.height*0.15, cFire.height*0.5), 1.1);
+      if(navigator.vibrate) navigator.vibrate([15, 35, 15]);
+      spinning = false;
+    }, 3700);
+  }
+
+  document.getElementById('btnWheel').addEventListener('click', () => show(wheelModal));
+  document.getElementById('btnSpin').addEventListener('click', spinWheel);
+  document.getElementById('btnSpinAlt').addEventListener('click', spinWheel);
+
+  // ===== Music: default try autoplay, fallback tap overlay =====
+  // Upload song.mp3 cạnh index.html trong repo để có nhạc.
+  let audio = new Audio("song.mp3");
+  audio.loop = true;
+  audio.volume = 0.35;
+
+  let playing = false;
+  const btnMusic = document.getElementById('btnMusic');
+  const tapOverlay = document.getElementById('tapOverlay');
+
+  function setMusicLabel(){
+    btnMusic.textContent = playing ? '🔈 Tắt nhạc' : '🔊 Bật nhạc';
+  }
+  setMusicLabel();
+
+  async function tryAutoplay(){
+    try{
+      await audio.play();
+      playing = true;
+      setMusicLabel();
+    }catch{
+      tapOverlay.style.display = 'grid';
+    }
+  }
+
+  tapOverlay.addEventListener('click', async () => {
+    try{
+      await audio.play();
+      playing = true;
+      setMusicLabel();
+      tapOverlay.style.display = 'none';
+    }catch{
+      alert("Không phát được nhạc. Hãy kiểm tra bạn đã upload song.mp3 chưa.");
+    }
+  });
+
+  btnMusic.addEventListener('click', async () => {
+    try{
+      if(!playing){
+        await audio.play();
+        playing = true;
+        tapOverlay.style.display = 'none';
+      }else{
+        audio.pause();
+        playing = false;
+      }
+      setMusicLabel();
+    }catch{
+      tapOverlay.style.display = 'grid';
+    }
+  });
+
+  tryAutoplay();
 
 })();
 </script>
